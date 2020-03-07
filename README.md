@@ -1,3 +1,3 @@
-# swift-algorithm-club
+# SwiftAlgorithmClub
 
-A description of this package.
+swift-algorithm-club raywenderlich project source code in a Swift Package.
