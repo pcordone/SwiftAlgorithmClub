@@ -5,15 +5,20 @@ final class SwiftAlgorithmClubTests: XCTestCase {
     private var now: Date!
     private var nowMinusOneSec: Date!
     private var nowPlusOneSec: Date!
+    private var array: OrderedArray<Date>!
     
     override func setUp() {
+        array = OrderedArray<Date>(array: [])
         now = Date(timeIntervalSinceReferenceDate: 0)
         nowMinusOneSec = now.addingTimeInterval(-1)
         nowPlusOneSec = now.addingTimeInterval(1)
     }
     
+    func testCount() {
+        XCTAssertEqual(0, array.count)
+    }
+    
     func testOrderedArrayInsert() {
-        var array = OrderedArray<Date>(array: [])
         XCTAssertEqual(0, array.insert(now))
         XCTAssertEqual(1, array.count)
         XCTAssertEqual(now, array[0])
@@ -26,11 +31,43 @@ final class SwiftAlgorithmClubTests: XCTestCase {
         XCTAssertEqual(nowPlusOneSec, array[2])
     }
     
+    func testIsEmpty() {
+        XCTAssertTrue(array.isEmpty)
+        XCTAssertEqual(0, array.insert(now))
+        XCTAssertFalse(array.isEmpty)
+    }
+    
+    func testRemoveAtIndex() {
+        XCTAssertEqual(0, array.insert(now))
+        XCTAssertEqual(1, array.count)
+        XCTAssertEqual(now, array.removeAtIndex(0))
+        XCTAssertEqual(0, array.count)
+    }
+    
+    func testOrderedArrayRemove() {
+        XCTAssertEqual(0, array.insert(nowMinusOneSec))
+        XCTAssertEqual(1, array.insert(now))
+        XCTAssertEqual(2, array.insert(nowPlusOneSec))
+        XCTAssertEqual(3, array.count)
+        XCTAssertEqual(now, array.remove(now))
+        XCTAssertEqual(2, array.count)
+    }
+    
+    func testRemoveAll() {
+        XCTAssertTrue(array.isEmpty)
+        array.removeAll()
+        XCTAssertTrue(array.isEmpty)
+        XCTAssertEqual(0, array.insert(now))
+        array.removeAll()
+        XCTAssertTrue(array.isEmpty)
+        XCTAssertEqual(0, array.insert(nowMinusOneSec))
+        XCTAssertEqual(1, array.insert(now))
+        XCTAssertEqual(2, array.count)
+        array.removeAll()
+        XCTAssertTrue(array.isEmpty)
+    }
+    
     func testOrderedArrayMatchingOrPreviousToEntry() {
-        XCTAssertNotNil(now)
-        XCTAssertNotNil(nowPlusOneSec)
-        XCTAssertNotNil(nowMinusOneSec)
-        var array = OrderedArray<Date>(array: [])
         let nowMinusTwoSec = now.addingTimeInterval(-2)
         let nowMinusThreeSec = now.addingTimeInterval(-3)
         let nowPlusTwoSec = now.addingTimeInterval(+2)
@@ -44,7 +81,6 @@ final class SwiftAlgorithmClubTests: XCTestCase {
     }
     
     func testOrderedArrayMatchingOrLaterToEntry() {
-        var array = OrderedArray<Date>(array: [])
         let nowMinusTwoSec = now.addingTimeInterval(-2)
         let nowPlusTwoSec = now.addingTimeInterval(+2)
         let nowPlusThreeSec = now.addingTimeInterval(+3)
@@ -56,9 +92,16 @@ final class SwiftAlgorithmClubTests: XCTestCase {
         XCTAssertNil(array.matchingOrLaterThanEntry(nowPlusThreeSec))
         XCTAssertEqual(nowPlusTwoSec, array.matchingOrLaterThanEntry(nowPlusTwoSec))
     }
-
+    
     static var allTests = [
-        ("testOrderedArray", testOrderedArrayInsert),
+        ("testCount", testCount),
+        ("testOrderedArrayInsert", testOrderedArrayInsert),
+        ("testIsEmpty", testIsEmpty),
+        ("testRemoveAtIndex", testRemoveAtIndex),
+        ("testOrderedArrayRemove", testOrderedArrayRemove),
+        ("testRemoveAll", testRemoveAll),
         ("testOrderedArrayMatchingOrPreviousToEntry", testOrderedArrayMatchingOrPreviousToEntry),
+        ("testOrderedArrayMatchingOrLaterToEntry", testOrderedArrayMatchingOrLaterToEntry),
+        ("testOrderedArrayRemove", testOrderedArrayRemove),
     ]
 }

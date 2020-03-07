@@ -1,6 +1,6 @@
 import Foundation
 
-public struct OrderedArray<T: Comparable> {
+public struct OrderedArray<T: Comparable>: Equatable {
     fileprivate var array = [T]()
 
     public init(array: [T]) {
@@ -18,8 +18,16 @@ public struct OrderedArray<T: Comparable> {
     public subscript(index: Int) -> T {
         return array[index]
     }
+    
+    public mutating func remove(_ item: T) -> T? {
+        let i = findInsertionPoint(item)
+        guard array[i] == item else {
+            return nil
+        }
+        return array.remove(at: i)
+    }
 
-    public mutating func removeAtIndex(index: Int) -> T {
+    public mutating func removeAtIndex(_ index: Int) -> T {
         return array.remove(at: index)
     }
 
