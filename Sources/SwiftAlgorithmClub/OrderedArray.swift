@@ -1,10 +1,18 @@
 import Foundation
 
 public struct OrderedArray<T: Comparable>: Equatable {
+    public enum Match {
+        case exactonly
+        case previous
+        case after
+    }
+    
     fileprivate var array = [T]()
-
-    public init(array: [T]) {
+    fileprivate var allowDuplicates: Bool
+    
+    public init(array: [T], allowDuplicates: Bool = true) {
         self.array = array.sorted()
+        self.allowDuplicates = allowDuplicates
     }
 
     public var isEmpty: Bool {
@@ -20,7 +28,7 @@ public struct OrderedArray<T: Comparable>: Equatable {
     }
     
     public mutating func remove(_ item: T) -> T? {
-        let i = findInsertionPoint(item)
+        let (_, i) = findInsertionPoint(item)
         guard array[i] == item else {
             return nil
         }
@@ -36,34 +44,38 @@ public struct OrderedArray<T: Comparable>: Equatable {
     }
 
     /// This method will return the entry that is previous to the entry that was passed in.
-    public func matchingOrPreviousToEntry(_ entry: T) -> T? {
-        let i = findInsertionPoint(entry)
-        if array[i] == entry {
+    public subscript(index: T, match: Match) -> T? {
+        let (exists, i) = findInsertionPoint(index)
+        if exists {
             return array[i]
         }
-        if i == 0 {
-            if array[i] < entry {
-                return array[i]
-            } else {
+        switch(match) {
+        case .exactonly:
+            break
+        case .previous:
+            guard i != 0 else {
+                if array[i] < index {
+                    return array[i]
+                } else {
+                    return nil
+                }
+            }
+            return array[i - 1]
+        case .after:
+            guard i <= array.count - 1 else {
                 return nil
             }
+            return array[i]
         }
-        return array[i - 1]
+        return nil
     }
     
-    /// This method will return the entry that is after the entry that was passed in
-    public func matchingOrLaterThanEntry(_ entry: T) -> T? {
-        let i = findInsertionPoint(entry)
-        guard i <= array.count - 1 else {
-            return nil
+    public mutating func insert(_ newElement: T) -> (existing: Bool, index: Int) {
+        let (existing, i) = findInsertionPoint(newElement)
+        if !existing || existing && allowDuplicates {
+            array.insert(newElement, at: i)
         }
-        return array[i]
-    }
-    
-    public mutating func insert(_ newElement: T) -> Int {
-        let i = findInsertionPoint(newElement)
-        array.insert(newElement, at: i)
-        return i
+        return (existing: existing, index: i)
     }
 
     /*
@@ -79,21 +91,21 @@ public struct OrderedArray<T: Comparable>: Equatable {
     */
 
     // Fast version that uses a binary search.
-    private func findInsertionPoint(_ newElement: T) -> Int {
+    private func findInsertionPoint(_ newElement: T) -> (exists: Bool, index: Int) {
         var startIndex = 0
         var endIndex = array.count
 
         while startIndex < endIndex {
             let midIndex = startIndex + (endIndex - startIndex) / 2
             if array[midIndex] == newElement {
-                return midIndex
+                return (exists: true, index: midIndex)
             } else if array[midIndex] < newElement {
                 startIndex = midIndex + 1
             } else {
                 endIndex = midIndex
             }
         }
-        return startIndex
+        return (exists: false, index: startIndex)
     }
 }
 
