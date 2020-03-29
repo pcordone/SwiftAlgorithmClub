@@ -114,6 +114,7 @@ final class SwiftAlgorithmClubTests: XCTestCase {
     }
     
     static var allTests = [
+        ("testInitNoArgs", testInitNoArgs),
         ("testCount", testCount),
         ("testOrderedArrayInsertAllowDuplicates", testOrderedArrayInsertAllowDuplicates),
         ("testOrderedArrayInsertDontAllowDuplicates", testOrderedArrayInsertDontAllowDuplicates),
