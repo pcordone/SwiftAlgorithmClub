@@ -24,6 +24,11 @@ final class SwiftAlgorithmClubTests: XCTestCase {
         nowPlusOneSec = now.addingTimeInterval(1)
     }
     
+    func testInitNoArgs() {
+        array = OrderedArray<Date>()
+        XCTAssertEqual(0, array.count)
+    }
+    
     func testCount() {
         XCTAssertEqual(0, array.count)
     }

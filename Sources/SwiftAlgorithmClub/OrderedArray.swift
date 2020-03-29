@@ -10,6 +10,10 @@ public struct OrderedArray<T: Comparable>: Equatable {
     fileprivate var array = [T]()
     fileprivate var allowDuplicates: Bool
     
+    public init(allowDuplicates: Bool = true) {
+        self.init(array: [], allowDuplicates: allowDuplicates)
+    }
+    
     public init(array: [T], allowDuplicates: Bool = true) {
         self.array = array.sorted()
         self.allowDuplicates = allowDuplicates
